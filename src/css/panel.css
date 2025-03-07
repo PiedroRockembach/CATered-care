@@ -10,7 +10,7 @@ body{
     background-color: #e3d6c9;
     border: 4px solid rgb(71, 43, 23);
     min-width: 400px;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     display: flex;
     align-items: center;
@@ -21,14 +21,43 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-grow: 3;
+    flex-grow: 2;
     align-items: center;
 }
 .itens-menu {
     display: flex;
-    padding: 2em 1em;
+    padding: 1em;
+    height: 100%;
     border-left: 4px solid rgb(71, 43, 23);
     flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-around;
     gap: 1em;
-    flex-grow: 1;
 }
+.slot
+    {
+        height: 30vh;
+        width: 30vh;
+        display: flex;
+        justify-content: center;
+        background-size: cover;
+        align-items: center;
+    }
+
+    @media screen and (max-width: 768px) {
+        .panel {
+            flex-direction: column;
+        }
+        .itens-menu {
+            border-left: none;
+            border-top: 4px solid rgb(71, 43, 23);
+            flex-direction: row;
+            height: 20vh;
+            width: 100%;
+        }
+        .slot {
+            height: 30vw;
+            width: 30vw;
+        }
+        
+    }

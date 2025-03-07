@@ -4,16 +4,21 @@ import { ItemTypes } from "../types/ItemTypes";
 import catIdle from '../assets/cat_idle.gif';
 import catOpenMouth from '../assets/cat_open_mouth.gif';
 import catEating from '../assets/cat_eating.gif';
-import eatingSound from '../assets/pou-eating.mp3';
+import catLookingUp from '../assets/cat_looking_up.gif';
+import catBrushing from '../assets/cat_brushing.gif';
 
-import { useEffect, useMemo, useState } from "react";
+import eatingSound from '../assets/pou-eating.mp3';
+import brushSound from '../assets/brushsound.mp3';
+
+import {  useMemo, useState } from "react";
 interface DropMonitor{
     isOver: () => boolean;
     canDrop: ()=> boolean ;
+    getItem: ()=> any;
 }
 type dropProps = [
     {isOver: boolean, 
-    canDrop: boolean},
+    canDrop: boolean, item: any},
     drop: ConnectDropTarget
 ];
 interface States {
@@ -25,7 +30,8 @@ const stateOptions = {
     open: 'open',
     eating: 'eating',
     brushing: 'brushing',
-    medicating: 'medicating'
+    medicating: 'medicating',
+    lookingUp: 'lookingUp'
 }
 interface Images {
     [key: string]: string;
@@ -34,11 +40,13 @@ const images: Images = {
     idle: catIdle,
     open: catOpenMouth,
     eating: catEating,
+    brushing: catBrushing,
+    lookingUp: catLookingUp
 }
 export default function Cat() {
     const [state, setState] = useState(stateOptions.idle);
     const [busy, setBusy] = useState(false);
-    const[{ isOver, canDrop }, drop]: dropProps = useDrop(() => (
+    const[{ isOver, canDrop, item }, drop]: dropProps = useDrop(() => (
         {
             accept: ItemTypes.ITEM,
             drop: (item:{name:string, type:string}) => {
@@ -47,7 +55,7 @@ export default function Cat() {
                 
                 const states: States = {
                     comida: ()=> ToEat(),
-                    escova: ()=> console.log('Escovando'),
+                    escova: ()=> ToBrush(),
                     remedio: ()=> console.log('Dando remédio')
                 };
                 const action = states[item.name];
@@ -57,6 +65,7 @@ export default function Cat() {
             collect: (monitor: DropMonitor) => ({
                 isOver: !!monitor.isOver(),
                 canDrop: !!monitor.canDrop(),
+                item: monitor.getItem(),
             }),
         }
     ),[]);
@@ -73,10 +82,32 @@ export default function Cat() {
         }, 2000);
        
     }
+
+    const ToBrush = () => {
+        console.log("escovando")
+        setBusy(true);
+        const audio = new Audio(brushSound)
+        audio.setAttribute('volume', '1');
+        audio.play();
+        setState(stateOptions.brushing);
+        setTimeout(()=> {
+            setBusy(false);
+        }, 2000);
+
+    }
    useMemo(()=> {
         if(isOver){
             if(canDrop && !busy){
-                setState(stateOptions.open);
+                if(state !== stateOptions.open && (item.name === 'comida'|| item.name == 'remedio') ){
+                    setState(stateOptions.open);
+                }
+                if(state !== stateOptions.lookingUp && item.name === 'escova'){
+                    setState(stateOptions.lookingUp);
+                }
+            }
+        } else{
+            if(state !== stateOptions.idle && !busy){
+                setState(stateOptions.idle);
             }
         }
    },[isOver]);
@@ -84,8 +115,6 @@ export default function Cat() {
         <div ref={drop as any} className="cat" style={{
             width: "50vh",
             height: "50vh",
-
-            alignSelf: 'stretch',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

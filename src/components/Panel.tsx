@@ -4,6 +4,7 @@ import DraggableItem from "./DraggableItem";
 import Slot from "./Slot";
 
 import carrot from '../assets/carrot.png';
+import brush from '../assets/brush.png';
 export default function Panel() {
     return (
         <section className="panel">
@@ -15,7 +16,7 @@ export default function Panel() {
               <DraggableItem name="comida" content={<img src={carrot}/>} type={ItemTypes.ITEM} img={carrot}/>
             </Slot>
             <Slot>
-              <DraggableItem name="remedio" content="Item 2" type={ItemTypes.ITEM} img={carrot}/>
+              <DraggableItem name="escova" content={<img src={brush}/>} type={ItemTypes.ITEM} img={brush}/>
             </Slot>
             <Slot>
 
