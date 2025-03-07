@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ConnectDragPreview, ConnectDragSource, useDrag } from "react-dnd";
+import { ConnectDragPreview, ConnectDragSource, DragPreviewImage, useDrag } from "react-dnd";
 type dragProps = [
     props: {isDragging: boolean},
     drag: ConnectDragSource,
@@ -9,19 +9,28 @@ export type DraggableItemProps = {
     name: string;
     content: ReactNode;
     type: string;
+    img?: string;
     };
 
-export default function DraggableItem({name, content, type}: DraggableItemProps) {
-    const [{ isDragging }, drag]: dragProps = useDrag(() => ({
+export default function DraggableItem({name, content, type, img}: DraggableItemProps) {
+    const [{ isDragging }, drag, prev]: dragProps = useDrag(() => ({
         type,
-        item: { name },
+        item: { name, type },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         })
     }));
     return (
-        <div ref={drag as any} id={name} className="draggable-item">
-            {content}
-        </div>
+        <>
+            {img && <DragPreviewImage connect={prev as any} src={img} />}
+            <div ref={drag as any} id={name} className="draggable-item"
+                style={{
+                    opacity: isDragging ? 0.5 : 1,
+                    cursor: 'move',
+                }}
+            >
+                {content}
+            </div>
+        </>
     );
 }
