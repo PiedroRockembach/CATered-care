@@ -51,6 +51,7 @@ body{
         .itens-menu {
             border-left: none;
             border-top: 4px solid rgb(71, 43, 23);
+
             flex-direction: row;
             height: 20vh;
             width: 100%;

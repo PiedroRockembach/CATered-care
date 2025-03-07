@@ -25,7 +25,9 @@ export default function DraggableItem({name, content, type, img}: DraggableItemP
             {img && <DragPreviewImage connect={prev as any} src={img} />}
             <div ref={drag as any} id={name} className="draggable-item"
                 style={{
-                    opacity: isDragging ? 0.5 : 1,
+                    opacity: isDragging ? 0.3 : 1,
+                    background: isDragging? "white": "none",
+                    padding: isDragging? "0": "1rem",
                     cursor: 'move',
                 }}
             >

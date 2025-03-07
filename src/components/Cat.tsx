@@ -6,10 +6,11 @@ import catOpenMouth from '../assets/cat_open_mouth.gif';
 import catEating from '../assets/cat_eating.gif';
 import catLookingUp from '../assets/cat_looking_up.gif';
 import catBrushing from '../assets/cat_brushing.gif';
+import catMeowing from '../assets/cat_meow.gif';
 
 import eatingSound from '../assets/pou-eating.mp3';
 import brushSound from '../assets/brushsound.mp3';
-
+import mew from '../assets/meow.mp3';
 import {  useMemo, useState } from "react";
 interface DropMonitor{
     isOver: () => boolean;
@@ -31,7 +32,8 @@ const stateOptions = {
     eating: 'eating',
     brushing: 'brushing',
     medicating: 'medicating',
-    lookingUp: 'lookingUp'
+    lookingUp: 'lookingUp',
+    meowing: 'meowing'
 }
 interface Images {
     [key: string]: string;
@@ -41,7 +43,8 @@ const images: Images = {
     open: catOpenMouth,
     eating: catEating,
     brushing: catBrushing,
-    lookingUp: catLookingUp
+    lookingUp: catLookingUp,
+    meowing: catMeowing
 }
 export default function Cat() {
     const [state, setState] = useState(stateOptions.idle);
@@ -87,29 +90,41 @@ export default function Cat() {
         console.log("escovando")
         setBusy(true);
         const audio = new Audio(brushSound)
-        audio.setAttribute('volume', '1');
+        audio.setAttribute('volume', '1.5');
         audio.play();
         setState(stateOptions.brushing);
         setTimeout(()=> {
             setBusy(false);
-        }, 2000);
+        }, 3000);
 
     }
-   useMemo(()=> {
-        if(isOver){
-            if(canDrop && !busy){
-                if(state !== stateOptions.open && (item.name === 'comida'|| item.name == 'remedio') ){
-                    setState(stateOptions.open);
-                }
-                if(state !== stateOptions.lookingUp && item.name === 'escova'){
-                    setState(stateOptions.lookingUp);
-                }
+    const ToMeow = ()=>{
+        if(busy) return;
+        setBusy(true);
+        const audio = new Audio(mew)
+        audio.setAttribute('volume', '1');
+        audio.play();
+        setState(stateOptions.meowing);
+        setTimeout(()=> {
+            setBusy(false);
+        }, 1000);
+    }
+    if(isOver){
+        if(canDrop && !busy){
+            if(state !== stateOptions.open && (item.name === 'comida'|| item.name == 'remedio') ){
+                setState(stateOptions.open);
             }
-        } else{
-            if(state !== stateOptions.idle && !busy){
-                setState(stateOptions.idle);
+            if(state !== stateOptions.lookingUp && item.name === 'escova'){
+                setState(stateOptions.lookingUp);
             }
         }
+    } else{
+        if(state !== stateOptions.idle && !busy){
+            setState(stateOptions.idle);
+        }
+    }
+   useMemo(()=> {
+        
    },[isOver]);
     return (
         <div ref={drop as any} className="cat" style={{
@@ -119,8 +134,10 @@ export default function Cat() {
             justifyContent: 'center',
             alignItems: 'center',
             fontSize: '4rem',
-        }}>
-            <img src={images[state]} alt="" />
+        }}
+        
+        >
+            <img src={images[state]} alt="" onClick={ToMeow}/>
         </div>
     );
 }
